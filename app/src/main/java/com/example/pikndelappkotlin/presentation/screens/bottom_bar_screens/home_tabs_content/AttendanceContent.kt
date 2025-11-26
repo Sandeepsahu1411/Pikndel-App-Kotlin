@@ -11,6 +11,7 @@ import androidx.compose.material.icons.outlined.CalendarMonth
 import androidx.compose.material.icons.outlined.CalendarViewMonth
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.Fingerprint
+import androidx.compose.material.icons.outlined.Report
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -26,6 +27,7 @@ import com.example.pikndelappkotlin.presentation.screens.bottom_bar_screens.home
 import com.example.pikndelappkotlin.presentation.screens.bottom_bar_screens.home_tabs_content.attendance_tabs_content.TableContent
 import com.example.pikndelappkotlin.presentation.screens.bottom_bar_screens.FilterItem
 import com.example.pikndelappkotlin.presentation.screens.bottom_bar_screens.TaskBoardTopRow
+import com.example.pikndelappkotlin.presentation.screens.bottom_bar_screens.home_tabs_content.attendance_tabs_content.SummaryRegularizationContent
 import kotlinx.coroutines.launch
 
 
@@ -39,6 +41,7 @@ fun AttendanceContent() {
                 FilterItem("Punch In/Out", Icons.Outlined.Fingerprint),
                 FilterItem("Calender", Icons.Outlined.CalendarMonth),
                 FilterItem("Table", Icons.Outlined.CalendarViewMonth),
+                FilterItem("Summary/Regularization", Icons.Outlined.Report),
                 FilterItem("Availability", Icons.Outlined.CheckCircle),
             )
         }
@@ -72,7 +75,8 @@ fun AttendanceContent() {
                     0 -> PunchInOutContent()
                     1 -> CalenderContent()
                     2 -> TableContent()
-                    3 -> AvailabilityContent()
+                    3-> SummaryRegularizationContent()
+                    4 -> AvailabilityContent()
                 }
             }
         }

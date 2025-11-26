@@ -1,5 +1,7 @@
 package com.example.pikndelappkotlin.presentation.screens.bottom_bar_screens
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -50,6 +52,7 @@ import com.example.pikndelappkotlin.presentation.screens.bottom_bar_screens.home
 import com.example.pikndelappkotlin.presentation.screens.utils.commonUtils.CustomTopBar
 import kotlinx.coroutines.launch
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun HomeScreenUI(navController: NavController) {
     Column {
@@ -137,7 +140,7 @@ fun TaskBoardTopRow(
                 onClick = { onTabSelected(index) },
                 selectedContentColor = MaterialTheme.colorScheme.primary,
                 unselectedContentColor = MaterialTheme.colorScheme.onSurfaceVariant
-            ){
+            ) {
                 Row(
                     modifier = Modifier
                         .padding(horizontal = 12.dp, vertical = 10.dp),

@@ -8,6 +8,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.EditCalendar
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -20,6 +23,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.pikndelappkotlin.presentation.screens.utils.commonUtils.CustomButton
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
@@ -52,15 +56,16 @@ fun PunchInOutContent(
     }
 
     Column(
+
         modifier = modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = 16.dp, vertical = 12.dp)
+            .padding(horizontal = 16.dp, vertical = 12.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         // Today, Date
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(bottom = 12.dp)
         ) {
             Text(
                 text = "Today, ",
@@ -90,28 +95,45 @@ fun PunchInOutContent(
             )
         }
 
-        Spacer(Modifier.height(12.dp))
-
-        // Map Area
-        Box(
+        // Map Area (with elevation)
+        ElevatedCard(
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(1f)
-                .clip(RoundedCornerShape(10.dp))
-                .background(Color(0xFFF3F5F7))
-
+                .weight(1f),
+            shape = RoundedCornerShape(10.dp),
+            elevation = CardDefaults.cardElevation(8.dp)
         ) {
-            MapWithCurrentLocation()
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color(0xFFF3F5F7))
+            ) {
+                MapWithCurrentLocation()
+            }
         }
+        CustomButton(
+            text = "Punch In/Out",
+            modifier = Modifier.fillMaxWidth(),
+            onClick = { /* TODO */ },
+            containerColor = MaterialTheme.colorScheme.error
+        )
+        CustomButton(
+            text = "Apply Leave",
+            modifier = Modifier.fillMaxWidth(),
+            onClick = { /* TODO */ },
+            containerColor = MaterialTheme.colorScheme.primary,
+            icon = Icons.Outlined.EditCalendar,
+            isIcon = true
+        )
+
     }
 }
 
 @Composable
 private fun TimeCard(title: String, time: String, modifier: Modifier = Modifier) {
-    ElevatedCard(modifier = modifier) {
+    ElevatedCard(modifier = modifier, elevation = CardDefaults.cardElevation( 8.dp)) {
         Column(modifier = Modifier.padding(10.dp)) {
             Text(text = title, style = MaterialTheme.typography.labelLarge, color = Color.Gray)
-            Spacer(Modifier.height(4.dp))
             Text(
                 text = time,
                 fontSize = 22.sp,
@@ -155,7 +177,7 @@ private fun  MapWithCurrentLocation() {
     }
 
     GoogleMap(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxWidth().height(400.dp),
         cameraPositionState = cameraState,
         properties = MapProperties(isMyLocationEnabled = permissions.allPermissionsGranted),
         uiSettings = MapUiSettings(myLocationButtonEnabled = true, zoomControlsEnabled = false)
