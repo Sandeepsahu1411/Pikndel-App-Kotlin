@@ -1,4 +1,4 @@
-package com.example.pikndelappkotlin.presentation.screens.utils.commonUtils
+package com.example.pikndelappkotlin.presentation.screens.common_composable
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
@@ -91,94 +91,6 @@ fun CustomTopBar(
 
     }
 
-
-//
-//    CenterAlignedTopAppBar(
-//        modifier = Modifier
-//            .fillMaxWidth(),
-//        colors = TopAppBarDefaults.topAppBarColors(
-//            containerColor = containerColor,
-//        ),
-//        title =
-//            {
-//                if (!title.isNotEmpty()) {
-//                    Image(
-//                        painter = painterResource(R.drawable.pikndelsplashlogo), contentDescription = null,
-//                        modifier = Modifier.size(150.dp)
-//
-//                    )
-//                } else {
-//                    Text(
-//                        text = title,
-//                        textAlign = TextAlign.Center,
-//                        fontWeight = FontWeight.Bold,
-//                        color = MaterialTheme.colorScheme.primary,
-//                        style = MaterialTheme.typography.titleLarge,
-//                    )
-//
-//                }
-//
-//            },
-//        actions = {
-//
-//            if (actionShow) {
-//                Icon(
-//                    imageVector = Icons.Default.Notifications,
-//                    contentDescription = "Notification",
-//                    tint = MaterialTheme.colorScheme.primary,
-//                    modifier = Modifier
-//                        .padding(horizontal = 10.dp)
-//                        .size(30.dp)
-//                        .clip(CircleShape)
-//                        .clickable {
-//                            navController.navigate(Routes.NotificationScreenRoute)
-//                        }
-//                )
-//                Box(
-//                    Modifier
-//                        .padding(end = 5.dp)
-//                        .size(30.dp)
-//                        .clip(CircleShape)
-//                        .border(1.dp, Color.Red, CircleShape)
-//                        .clickable {
-//                            profileDialog = true
-//
-//                        },
-//                    contentAlignment = Alignment.Center
-//                ) {
-//                }
-//            } else {
-//                Spacer(modifier = Modifier.size(30.dp))
-//            }
-//            actionsContent()
-//
-//        },
-//        navigationIcon = {
-//            if (showNavigation) {
-//                Icon(
-//                    imageVector = if (showBackButton) Icons.Default.ArrowBack else navigationIcon,
-//                    contentDescription = null,
-//                    tint = MaterialTheme.colorScheme.primary,
-//                    modifier = Modifier
-//                        .padding(horizontal = 10.dp)
-//                        .size(30.dp)
-//                        .clip(CircleShape)
-//                        .clickable {
-//                            if (showBackButton) {
-//                                navController.navigateUp()
-//
-//                            } else {
-//                                coroutineScope.launch {
-//                                    if (drawerState.isClosed) drawerState.open() else drawerState.close()
-//                                }
-//                            }
-//                        }
-//                )
-//            }
-//        },
-//
-//        )
-//
 }
 
 @Composable

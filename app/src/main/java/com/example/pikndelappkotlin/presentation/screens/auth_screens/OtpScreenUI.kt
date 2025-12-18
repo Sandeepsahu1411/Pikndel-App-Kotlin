@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -17,14 +16,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
-import androidx.compose.material.icons.filled.PhoneIphone
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalTextStyle
@@ -56,34 +52,46 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.pikndelappkotlin.presentation.navigation.Routes
-import com.example.pikndelappkotlin.presentation.screens.utils.commonUtils.CustomButton
-import com.example.pikndelappkotlin.presentation.screens.utils.commonUtils.CustomTextField
+import com.example.pikndelappkotlin.presentation.navigation.SubRoutes
+import com.example.pikndelappkotlin.presentation.screens.common_composable.CustomButton
+import com.example.pikndelappkotlin.presentation.screens.common_composable.CustomFullscreenLoader
+import kotlinx.coroutines.delay
 
 @Composable
 fun OtpScreenUI(navController: NavController, phoneNumber: String?) {
 
     var otp by remember { mutableStateOf("") }
-    Column(
+    var isLoading by remember { mutableStateOf(false) }
 
-    ) {
-    IconButton(onClick = { navController.navigateUp()}) {
-        Icon(
-            imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-            contentDescription = "Back",
-            tint = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.size(30.dp)
-        )
+    LaunchedEffect(isLoading) {
+        if (isLoading) {
+            delay(50000)
+            navController.navigate(Routes.HomeScreenRoute) {
+                popUpTo(SubRoutes.AuthSubRoute) {
+                    inclusive = true
+                }
+                launchSingleTop = true
+            }
+            isLoading = false
+        }
     }
+    Column(
+    ) {
+        IconButton(onClick = { navController.navigateUp() }) {
+            Icon(
+                imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
+                contentDescription = "Back",
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(30.dp)
+            )
+        }
 
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 16.dp)
                 .imePadding()
-
         ) {
-
-
             Text(
                 text = "Enter 4 digit OTP sent to you at +91 $phoneNumber.",
                 style = MaterialTheme.typography.headlineSmall,
@@ -122,7 +130,7 @@ fun OtpScreenUI(navController: NavController, phoneNumber: String?) {
             CustomButton(
                 text = "Verify",
                 onClick = {
-                    navController.navigate(Routes.HomeScreenRoute)
+                    isLoading = true
                 }
             )
             Text(
@@ -135,10 +143,11 @@ fun OtpScreenUI(navController: NavController, phoneNumber: String?) {
                 fontWeight = FontWeight.Medium
             )
             Spacer(Modifier.height(10.dp))
-
-
         }
     }
+
+    // Full-screen rotating logo loader overlay
+    CustomFullscreenLoader(isVisible = isLoading)
 
 
 }

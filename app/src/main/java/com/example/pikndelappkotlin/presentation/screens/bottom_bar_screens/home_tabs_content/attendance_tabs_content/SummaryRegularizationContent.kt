@@ -19,7 +19,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -31,7 +30,6 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.pikndelappkotlin.presentation.screens.bottom_bar_screens.home_tabs_content.CustomDropdownMenu
-import com.example.pikndelappkotlin.presentation.screens.utils.commonUtils.CustomButton
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -175,7 +173,7 @@ fun SummaryRegularizationContent(modifier: Modifier = Modifier) {
                                 )
                             }
                         }
-                    }
+                    } 
                 }
                 items(rows) { r ->
                     Row(

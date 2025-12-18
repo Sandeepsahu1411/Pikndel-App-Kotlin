@@ -1,7 +1,5 @@
 package com.example.pikndelappkotlin.presentation.screens.bottom_bar_screens
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -34,8 +32,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.saveable.rememberSaveableStateHolder
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -49,10 +47,9 @@ import com.example.pikndelappkotlin.presentation.screens.bottom_bar_screens.home
 import com.example.pikndelappkotlin.presentation.screens.bottom_bar_screens.home_tabs_content.DeliveryContent
 import com.example.pikndelappkotlin.presentation.screens.bottom_bar_screens.home_tabs_content.PickupContent
 import com.example.pikndelappkotlin.presentation.screens.bottom_bar_screens.home_tabs_content.ReceiveContent
-import com.example.pikndelappkotlin.presentation.screens.utils.commonUtils.CustomTopBar
+import com.example.pikndelappkotlin.presentation.screens.common_composable.CustomTopBar
 import kotlinx.coroutines.launch
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun HomeScreenUI(navController: NavController) {
     Column {

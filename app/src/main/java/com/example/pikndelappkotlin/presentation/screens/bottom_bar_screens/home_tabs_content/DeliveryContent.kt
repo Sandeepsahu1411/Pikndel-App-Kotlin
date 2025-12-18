@@ -42,8 +42,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.example.pikndelappkotlin.presentation.screens.utils.commonUtils.CustomButton
-import com.example.pikndelappkotlin.presentation.screens.utils.commonUtils.CustomCircleIconButton
+import com.example.pikndelappkotlin.presentation.screens.common_composable.CustomButton
+import com.example.pikndelappkotlin.presentation.screens.common_composable.CustomCircleIconButton
 
 data class DeliveryItem(
     val docketNo: String,

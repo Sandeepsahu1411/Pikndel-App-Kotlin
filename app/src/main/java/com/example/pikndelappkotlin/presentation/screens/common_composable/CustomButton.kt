@@ -1,4 +1,4 @@
-package com.example.pikndelappkotlin.presentation.screens.utils.commonUtils
+package com.example.pikndelappkotlin.presentation.screens.common_composable
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding

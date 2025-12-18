@@ -1,5 +1,10 @@
 package com.example.pikndelappkotlin.presentation.screens.bottom_bar_screens.home_tabs_content
 
+import android.Manifest
+import android.net.Uri
+import android.os.Environment
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -35,16 +40,50 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.example.pikndelappkotlin.presentation.screens.utils.commonUtils.CustomButton
-import com.example.pikndelappkotlin.presentation.screens.utils.commonUtils.CustomTextField
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.core.content.FileProvider
+import com.example.pikndelappkotlin.presentation.screens.common_composable.CustomButton
+import com.example.pikndelappkotlin.presentation.screens.common_composable.CustomTextField
+import com.example.pikndelappkotlin.utils.permissions.rememberPermissionGate
+import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @Composable
 fun PickupContent() {
+    val context = LocalContext.current
+    var capturedImageUri by remember { mutableStateOf<Uri?>(null) }
+    var currentPhotoUri by remember { mutableStateOf<Uri?>(null) }
+
+    // Launcher to capture a photo and write into a provided Uri
+    val takePictureLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.TakePicture()
+    ) { success ->
+        if (success) {
+            capturedImageUri = currentPhotoUri
+        }
+    }
+
+    fun openCamera() {
+        val uri = createImageUri(context)
+        currentPhotoUri = uri
+        takePictureLauncher.launch(uri)
+    }
+
+    // Reusable permission gate from AppPermissions: check+request CAMERA then run openCamera()
+    val askCameraAndOpen = rememberPermissionGate(
+        permission = Manifest.permission.CAMERA,
+        onGranted = { openCamera() }
+    )
+
     val vehicleOptions = remember {
         listOf(
             "MH04KU0732 (BALAJI N SUTRAVE)",
@@ -92,6 +131,8 @@ fun PickupContent() {
             onValueChange = { driverName = it },
             modifier = Modifier.fillMaxWidth(),
             placeholderText = "Driver name",
+            imeAction = ImeAction.Next,
+
         )
 
 
@@ -101,6 +142,8 @@ fun PickupContent() {
             onValueChange = { meterReading = it },
             modifier = Modifier.fillMaxWidth(),
             placeholderText = "Meter reading",
+            keyboardType = KeyboardType.Number,
+            onlyNumbers = true,
 
             )
 
@@ -128,7 +171,7 @@ fun PickupContent() {
                         color = Color(0xffb1b1b1),
                         shape = RoundedCornerShape(12.dp)
                     )
-                    .clickable { /* TODO: attach image picker later */ },
+                    .clickable { askCameraAndOpen() },
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
@@ -178,39 +221,54 @@ fun <T> CustomDropdownMenu(
         expanded = expanded,
         onExpandedChange = { expanded = !expanded }
     ) {
-        OutlinedTextField(
+        CustomTextField(
             value = selectedOption?.let { optionLabel(it) } ?: "",
             onValueChange = {},
-            shape = RoundedCornerShape(10.dp),
+            placeholderText = label,
             modifier = Modifier
                 .menuAnchor(MenuAnchorType.PrimaryNotEditable, enabled = true)
                 .height(50.dp)
                 .then(fieldModifier)
                 .clickable { expanded = true },
-            placeholder = {
-                Text(text = label)
-            },
-            textStyle = TextStyle(
-                color = Color.DarkGray,
-                fontSize = MaterialTheme.typography.bodyMedium.fontSize,
-                fontWeight = FontWeight.Normal
-            ),
-            readOnly = true,
+            isEditable = false,
             trailingIcon = {
                 ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
             },
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = Color(0xffb1b1b1),
-                unfocusedBorderColor = Color(0xffb1b1b1),
-                focusedTrailingIconColor = Color(0xffb1b1b1),
-                unfocusedTrailingIconColor = Color(0xffb1b1b1),
-                focusedLeadingIconColor = Color(0xffb1b1b1),
-                unfocusedLeadingIconColor = Color(0xffb1b1b1),
-                focusedLabelColor = Color.DarkGray,
-                unfocusedLabelColor = Color.DarkGray,
-                cursorColor = Color.DarkGray,
-            )
+
         )
+//        OutlinedTextField(
+//            value = selectedOption?.let { optionLabel(it) } ?: "",
+//            onValueChange = {},
+//            shape = RoundedCornerShape(10.dp),
+//            modifier = Modifier
+//                .menuAnchor(MenuAnchorType.PrimaryNotEditable, enabled = true)
+//                .height(50.dp)
+//                .then(fieldModifier)
+//                .clickable { expanded = true },
+//            placeholder = {
+//                Text(text = label)
+//            },
+//            textStyle = TextStyle(
+//                color = Color.DarkGray,
+//                fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+//                fontWeight = FontWeight.Normal
+//            ),
+//            readOnly = true,
+//            trailingIcon = {
+//                ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+//            },
+//            colors = OutlinedTextFieldDefaults.colors(
+//                focusedBorderColor = Color(0xffb1b1b1),
+//                unfocusedBorderColor = Color(0xffb1b1b1),
+//                focusedTrailingIconColor = Color(0xffb1b1b1),
+//                unfocusedTrailingIconColor = Color(0xffb1b1b1),
+//                focusedLeadingIconColor = Color(0xffb1b1b1),
+//                unfocusedLeadingIconColor = Color(0xffb1b1b1),
+//                focusedLabelColor = Color.DarkGray,
+//                unfocusedLabelColor = Color.DarkGray,
+//                cursorColor = Color.DarkGray,
+//            )
+//        )
 
         ExposedDropdownMenu(
             modifier = Modifier.height(dropdownHeight),
@@ -233,4 +291,15 @@ fun <T> CustomDropdownMenu(
         }
     }
 
+}
+
+private fun createImageUri(context: android.content.Context): Uri {
+    val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+    val storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+    val imageFile = File(storageDir, "IMG_${timeStamp}.jpg")
+    return FileProvider.getUriForFile(
+        context,
+        "${context.packageName}.fileprovider",
+        imageFile
+    )
 }

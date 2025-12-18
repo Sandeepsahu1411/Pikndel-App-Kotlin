@@ -1,4 +1,4 @@
-package com.example.pikndelappkotlin.presentation.screens.utils.commonUtils
+package com.example.pikndelappkotlin.presentation.screens.common_composable
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
@@ -9,11 +9,12 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 
 @Composable
 fun CustomCircleIconButton(
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    icon: ImageVector,
     contentDesc: String,
     onClick: () -> Unit
 ) {

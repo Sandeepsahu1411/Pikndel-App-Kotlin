@@ -30,15 +30,13 @@ import com.example.pikndelappkotlin.presentation.screens.bottom_bar_screens.More
 import com.example.pikndelappkotlin.presentation.screens.bottom_bar_screens.ProfileScreenUI
 import com.example.pikndelappkotlin.presentation.screens.bottom_bar_screens.ReportScreenUI
 import com.example.pikndelappkotlin.presentation.screens.other_screens.NotificationScreenUI
-import com.example.pikndelappkotlin.presentation.screens.utils.commonUtils.CustomBottomBar
+import com.example.pikndelappkotlin.presentation.screens.common_composable.CustomBottomBar
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun AppNavigation() {
     val navController = rememberNavController()
-
-    val isImeVisible = WindowInsets.isImeVisible
 
     val screensWithBottomBar = listOf(
         Routes.HomeScreenRoute::class.qualifiedName,
@@ -60,7 +58,6 @@ fun AppNavigation() {
 
 
     Scaffold(
-
         bottomBar = {
 
             if (shouldShowBottomBar.value) {
@@ -90,7 +87,6 @@ fun AppNavigation() {
             }
         },
         modifier = Modifier
-//            .background(color = bottomNavBarBgColor)
             .imePadding()
 //            .systemBarsPadding()
     )
@@ -100,13 +96,7 @@ fun AppNavigation() {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-//                .let {
-//                    if (shouldShowBottomBar.value && !isImeVisible) {
-//                        it.padding(bottom = innerPadding.calculateBottomPadding())
-//                    } else {
-//                        it
-//                    }
-//                }
+
         ) {
             NavHost(navController = navController, startDestination = SubRoutes.MainSubRoute) {
 
@@ -168,7 +158,5 @@ fun SetStatusBarColor(
             color = navigationBarColor,
             darkIcons = darkIcons
         )
-
-
     }
 }

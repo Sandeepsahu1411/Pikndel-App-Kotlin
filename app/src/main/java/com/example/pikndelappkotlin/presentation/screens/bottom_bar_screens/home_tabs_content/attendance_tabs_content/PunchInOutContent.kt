@@ -17,16 +17,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.pikndelappkotlin.presentation.screens.utils.commonUtils.CustomButton
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.MultiplePermissionsState
-import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import com.example.pikndelappkotlin.presentation.screens.common_composable.CustomButton
+import com.example.pikndelappkotlin.utils.permissions.rememberPermissionsGate
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
@@ -56,12 +53,11 @@ fun PunchInOutContent(
     }
 
     Column(
-
         modifier = modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
             .padding(horizontal = 16.dp, vertical = 12.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+//        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         // Today, Date
         Row(
@@ -77,7 +73,7 @@ fun PunchInOutContent(
                 style = MaterialTheme.typography.bodyLarge
             )
         }
-
+        Spacer(modifier = Modifier.height(12.dp))
         // Two Elevated Cards: Day start / Day end
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -85,7 +81,7 @@ fun PunchInOutContent(
         ) {
             TimeCard(
                 title = "Day start",
-                time = startTime ?: "--:--:--",
+                time = startTime ?: "00:00:00",
                 modifier = Modifier.weight(1f)
             )
             TimeCard(
@@ -94,6 +90,7 @@ fun PunchInOutContent(
                 modifier = Modifier.weight(1f)
             )
         }
+        Spacer(modifier = Modifier.height(12.dp))
 
         // Map Area (with elevation)
         ElevatedCard(
@@ -111,12 +108,16 @@ fun PunchInOutContent(
                 MapWithCurrentLocation()
             }
         }
+        Spacer(modifier = Modifier.height(12.dp))
+
         CustomButton(
             text = "Punch In/Out",
             modifier = Modifier.fillMaxWidth(),
             onClick = { /* TODO */ },
             containerColor = MaterialTheme.colorScheme.error
         )
+        Spacer(modifier = Modifier.height(5.dp))
+
         CustomButton(
             text = "Apply Leave",
             modifier = Modifier.fillMaxWidth(),
@@ -131,7 +132,7 @@ fun PunchInOutContent(
 
 @Composable
 private fun TimeCard(title: String, time: String, modifier: Modifier = Modifier) {
-    ElevatedCard(modifier = modifier, elevation = CardDefaults.cardElevation( 8.dp)) {
+    ElevatedCard(modifier = modifier, elevation = CardDefaults.cardElevation(8.dp)) {
         Column(modifier = Modifier.padding(10.dp)) {
             Text(text = title, style = MaterialTheme.typography.labelLarge, color = Color.Gray)
             Text(
@@ -144,23 +145,28 @@ private fun TimeCard(title: String, time: String, modifier: Modifier = Modifier)
     }
 }
 
-@OptIn(ExperimentalPermissionsApi::class)
 @Composable
-private fun  MapWithCurrentLocation() {
+private fun MapWithCurrentLocation() {
     val context = LocalContext.current
     val cameraState: CameraPositionState = rememberCameraPositionState()
     var currentLatLng by remember { mutableStateOf<LatLng?>(null) }
+    var locationGranted by remember { mutableStateOf(false) }
 
-    val permissions: MultiplePermissionsState = rememberMultiplePermissionsState(
-        permissions = listOf(
+    // Reusable gate: ask FINE+COARSE then center camera
+    val askLocation = rememberPermissionsGate(
+        permissions = arrayOf(
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION
-        )
+        ),
+        onGrantedAll = {
+            locationGranted = true
+        },
+        onDenied = {
+            locationGranted = false
+        }
     )
 
-    LaunchedEffect(Unit) {
-        permissions.launchMultiplePermissionRequest()
-    }
+    LaunchedEffect(Unit) { askLocation() }
 
     val fusedClient = remember {
         LocationServices.getFusedLocationProviderClient(context)
@@ -168,8 +174,8 @@ private fun  MapWithCurrentLocation() {
 
     val scope = rememberCoroutineScope()
 
-    LaunchedEffect(permissions.allPermissionsGranted) {
-        if (permissions.allPermissionsGranted) {
+    LaunchedEffect(locationGranted) {
+        if (locationGranted) {
             scope.launch {
                 currentLatLng = moveCameraToCurrentLocation(fusedClient, cameraState)
             }
@@ -177,9 +183,11 @@ private fun  MapWithCurrentLocation() {
     }
 
     GoogleMap(
-        modifier = Modifier.fillMaxWidth().height(400.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(450.dp),
         cameraPositionState = cameraState,
-        properties = MapProperties(isMyLocationEnabled = permissions.allPermissionsGranted),
+        properties = MapProperties(isMyLocationEnabled = locationGranted),
         uiSettings = MapUiSettings(myLocationButtonEnabled = true, zoomControlsEnabled = false)
     ) {
         // Fixed marker at user's current location (green pin)
@@ -197,7 +205,7 @@ private fun  MapWithCurrentLocation() {
 private suspend fun moveCameraToCurrentLocation(
     fusedClient: FusedLocationProviderClient,
     cameraState: CameraPositionState
-) : LatLng? {
+): LatLng? {
     // If lastLocation is null, request a single high-accuracy update
     val last = getLastKnownLocation(fusedClient)
     val location =
