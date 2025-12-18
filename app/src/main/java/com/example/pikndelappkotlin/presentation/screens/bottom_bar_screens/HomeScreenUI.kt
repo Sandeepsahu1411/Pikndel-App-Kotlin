@@ -57,6 +57,12 @@ fun HomeScreenUI(navController: NavController) {
             navController = navController,
         )
 
+        // Read requested start tab (e.g., from Profile -> "Mark Attendance")
+        val startTabIndex = navController.previousBackStackEntry
+            ?.savedStateHandle
+            ?.remove<Int>("home_start_tab")
+            ?: 0
+
         val tabs = remember {
             listOf(
                 FilterItem("Branch", Icons.Default.Apartment),
@@ -68,13 +74,19 @@ fun HomeScreenUI(navController: NavController) {
             )
         }
 
-        val pagerState = rememberPagerState(initialPage = 0, pageCount = { tabs.size })
-        var selectedTab by remember { mutableIntStateOf(0) }
+        val pagerState = rememberPagerState(initialPage = startTabIndex, pageCount = { tabs.size })
+        var selectedTab by remember { mutableIntStateOf(startTabIndex) }
         val coroutineScope = rememberCoroutineScope()
         val stateHolder = rememberSaveableStateHolder()
 
         LaunchedEffect(pagerState.currentPage) {
             selectedTab = pagerState.currentPage
+        }
+        // Ensure we land on desired tab even if state restoration interferes
+        LaunchedEffect(startTabIndex) {
+            if (pagerState.currentPage != startTabIndex) {
+                pagerState.scrollToPage(startTabIndex)
+            }
         }
 
         TaskBoardTopRow(
@@ -82,7 +94,13 @@ fun HomeScreenUI(navController: NavController) {
             selectedTab = selectedTab,
             onTabSelected = { index ->
                 if (index != selectedTab) {
-                    coroutineScope.launch { pagerState.animateScrollToPage(index) }
+                    // Instant visual feedback
+                    selectedTab = index
+                    coroutineScope.launch {
+                        if (pagerState.currentPage != index) {
+                            pagerState.scrollToPage(index)
+                        }
+                    }
                 }
             }
         )
@@ -91,7 +109,7 @@ fun HomeScreenUI(navController: NavController) {
             state = pagerState,
             modifier = Modifier.fillMaxSize(),
             userScrollEnabled = false,
-            beyondViewportPageCount = 1
+            beyondViewportPageCount = 0
         ) { page ->
             stateHolder.SaveableStateProvider(key = "home_pager_$page") {
                 when (page) {

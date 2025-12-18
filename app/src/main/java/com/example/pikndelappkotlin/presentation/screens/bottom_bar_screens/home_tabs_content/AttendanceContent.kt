@@ -55,11 +55,18 @@ fun AttendanceContent() {
         }
 
         TaskBoardTopRow(
+
             tabs = tabs,
             selectedTab = selectedTab,
             onTabSelected = { index ->
                 if (index != selectedTab) {
-                    coroutineScope.launch { pagerState.animateScrollToPage(index) }
+                    // Instant visual feedback
+                    selectedTab = index
+                    coroutineScope.launch {
+                        if (pagerState.currentPage != index) {
+                            pagerState.scrollToPage(index)
+                        }
+                    }
                 }
             }
         )
@@ -75,7 +82,7 @@ fun AttendanceContent() {
                     0 -> PunchInOutContent()
                     1 -> CalenderContent()
                     2 -> TableContent()
-                    3-> SummaryRegularizationContent()
+                    3 -> SummaryRegularizationContent()
                     4 -> AvailabilityContent()
                 }
             }

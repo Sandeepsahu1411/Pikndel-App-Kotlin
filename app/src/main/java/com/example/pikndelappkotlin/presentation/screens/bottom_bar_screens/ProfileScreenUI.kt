@@ -39,6 +39,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.pikndelappkotlin.presentation.navigation.Routes
 import com.example.pikndelappkotlin.presentation.screens.bottom_bar_screens.home_tabs_content.CustomDropdownMenu
 import com.example.pikndelappkotlin.presentation.screens.common_composable.CustomButton
 import java.time.YearMonth
@@ -163,7 +164,13 @@ fun ProfileScreenUI(navController: NavController) {
                     ProfileMenuItem(
                         icon = Icons.Outlined.CalendarToday,
                         label = "Mark Attendance",
-                        onClick = { /* TODO */ }
+                        onClick = {
+                            // Ask Home screen to open the Attendance tab (index 3)
+                            navController.currentBackStackEntry
+                                ?.savedStateHandle
+                                ?.set("home_start_tab", 3)
+                            navController.navigate(Routes.HomeScreenRoute)
+                        }
                     )
                     HorizontalDivider(Modifier, DividerDefaults.Thickness, DividerDefaults.color)
                     ProfileMenuItem(

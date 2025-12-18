@@ -25,7 +25,7 @@ fun CustomButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier.fillMaxWidth(),
-    textModifier: Modifier = Modifier.padding(vertical = 5.dp),
+    textModifier: Modifier = Modifier.padding(vertical = 3.dp),
     containerColor: Color = MaterialTheme.colorScheme.primary,
     contentColor: Color = MaterialTheme.colorScheme.onPrimary,
     shape: Shape = RoundedCornerShape(10.dp),
@@ -59,7 +59,6 @@ fun CustomButton(
             fontSize = fontSize,
             modifier = textModifier,
             fontWeight = FontWeight.Medium,
-
             )
 
     }

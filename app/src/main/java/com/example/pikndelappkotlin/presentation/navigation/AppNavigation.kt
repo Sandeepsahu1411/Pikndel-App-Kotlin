@@ -1,5 +1,6 @@
 package com.example.pikndelappkotlin.presentation.navigation
 
+import android.app.Activity
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.WindowInsets
@@ -17,6 +18,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.ui.text.style.TextAlign
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -31,12 +38,16 @@ import com.example.pikndelappkotlin.presentation.screens.bottom_bar_screens.Prof
 import com.example.pikndelappkotlin.presentation.screens.bottom_bar_screens.ReportScreenUI
 import com.example.pikndelappkotlin.presentation.screens.other_screens.NotificationScreenUI
 import com.example.pikndelappkotlin.presentation.screens.common_composable.CustomBottomBar
+import com.example.pikndelappkotlin.presentation.screens.common_composable.CustomDialog
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun AppNavigation() {
     val navController = rememberNavController()
+    val context = LocalContext.current
+    val activity = (context as? Activity)
+    var showExitDialog by remember { mutableStateOf(false) }
 
     val screensWithBottomBar = listOf(
         Routes.HomeScreenRoute::class.qualifiedName,
@@ -76,9 +87,7 @@ fun AppNavigation() {
                                 else -> Routes.HomeScreenRoute
                             }
                             navController.navigate(route) {
-                                popUpTo(SubRoutes.MainSubRoute) {
-                                    saveState = true
-                                }
+                                // Keep history across tabs; do not clear back stack
                                 launchSingleTop = true
                                 restoreState = true
                             }
@@ -92,12 +101,56 @@ fun AppNavigation() {
     )
     { innerPadding ->
 
+        // Back behavior:
+        // - If dialog showing -> close it
+        // - If currently on Home -> show exit dialog (do NOT pop)
+        // - Else try to pop back stack (Profile -> Report -> Home)
+        // - If nothing to pop and NOT on Home -> navigate to Home
+        BackHandler {
+            if (showExitDialog) {
+                showExitDialog = false
+                return@BackHandler
+            }
+            val current = navController.currentDestination?.route
+            val isHome = current == Routes.HomeScreenRoute::class.qualifiedName
+            if (isHome) {
+                showExitDialog = true
+                return@BackHandler
+            }
+            val popped = navController.popBackStack()
+            if (!popped) {
+                navController.navigate(Routes.HomeScreenRoute) {
+                    launchSingleTop = true
+                    restoreState = true
+                }
+            }
+        }
+
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
 
         ) {
+            // Global Exit Confirmation Dialog
+            CustomDialog(
+                showDialog = showExitDialog,
+                title = "Exit App",
+                onDismiss = { showExitDialog = false },
+                onConfirm = {
+                    showExitDialog = false
+                    activity?.finishAffinity()
+                }
+            ) {
+                Text(
+                    text = "You want to close the app?",
+                    color = Color.Unspecified,
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.titleMedium
+                )
+            }
+
             NavHost(navController = navController, startDestination = SubRoutes.MainSubRoute) {
 
                 navigation<SubRoutes.AuthSubRoute>(startDestination = Routes.SplashScreenRoute) {

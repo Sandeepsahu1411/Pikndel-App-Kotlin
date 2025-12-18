@@ -8,6 +8,7 @@ import androidx.compose.material.icons.filled.Inventory2
 import androidx.compose.material.icons.outlined.AllInbox
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.FireTruck
+import androidx.compose.material.icons.outlined.LocalShipping
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -25,7 +26,7 @@ import com.example.pikndelappkotlin.presentation.screens.bottom_bar_screens.More
     ) {
         val items = remember {
             listOf(
-                MoreItem("In-scan Bag", Icons.Outlined.FireTruck) {},
+                MoreItem("In-scan Bag", Icons.Outlined.LocalShipping) {},
                 MoreItem("In-scan Shipment", Icons.Filled.Inventory2) {},
                 MoreItem("Shipment Allocate ", Icons.Outlined.Person) {},
                 MoreItem("Receive from FE", Icons.Outlined.AllInbox) {},
